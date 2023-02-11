@@ -4,6 +4,8 @@ import { parse as parseHTML } from 'node-html-parser';
 import { ITournament } from "../interfaces/tournament.interface";
 
 export abstract class BaseProvider {
+  private static readonly BASE_ROUTE = '/cgi-bin/WebObjects/nuLigaTTDE.woa/wa/tournamentCalendar';
+
   protected baseUrl: string;
   protected federation: string;
 
@@ -11,6 +13,7 @@ export abstract class BaseProvider {
    * Constructor of the base provider.
    *
    * @param baseUrl
+   * @param federation
    */
   constructor(baseUrl: string, federation: string) {
     this.baseUrl = baseUrl;
@@ -42,7 +45,7 @@ export abstract class BaseProvider {
       circuit
     };
 
-    const response = await axios.get(this.baseUrl, {
+    const response = await axios.get(`${this.baseUrl}${BaseProvider.BASE_ROUTE}`, {
       params: requestParams
     });
 
@@ -73,10 +76,18 @@ export abstract class BaseProvider {
         continue;
       }
 
+      const registrationLink = `${this.baseUrl}${resultCols[1].getElementsByTagName('a')?.[0]?.getAttribute('href')}`;
+      const [_, organizer] = resultCols[1].innerHTML.split('<br>');
+
+      // console.log(resultCols[1].toString());
+
       tournaments.push({
         date: this.parseDate(resultCols[0].innerText.trim()),
-        participants: resultCols[2].innerText.trim(),
-        area
+        freeSpots: resultCols[2].innerText.trim(),
+        waitingList: resultCols[3].innerText.trim(),
+        area,
+        organizer: organizer.trim(),
+        registrationLink
       });
     }
 

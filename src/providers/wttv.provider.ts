@@ -2,7 +2,7 @@ import { BaseProvider } from './base.provider';
 import { ITournament } from '../interfaces/tournament.interface';
 
 export class WTTVProvider extends BaseProvider {
-  private static readonly BASE_URL = 'https://wttv.click-tt.de/cgi-bin/WebObjects/nuLigaTTDE.woa/wa/tournamentCalendar';
+  private static readonly BASE_URL = 'https://wttv.click-tt.de';
   private static readonly FEDERATION = 'WTTV';
 
   /**

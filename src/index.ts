@@ -12,9 +12,17 @@ async function run(): Promise<void> {
     totalTournaments.sort((a, b) => a.date.getTime() - b.date.getTime());
 
     for (const tournament of totalTournaments) {
-      console.log(`Datum: ${tournament.date.toLocaleString('de-DE', { dateStyle: 'long' })}`);
-      console.log(`Teilnehmer: ${tournament.participants}`);
-      console.log(`Area: ${tournament.area}\n`);
+      console.log(`Datum: ${tournament.date.toLocaleString('de-DE', { dateStyle: 'full', timeStyle: 'short' })}`);
+      console.log(`Organisator: ${tournament.organizer}`);
+      console.log(`Freie Plätze: ${tournament.freeSpots}`);
+      console.log(`Warteliste: ${tournament.waitingList}`);
+      console.log(`Area: ${tournament.area}`);
+
+      if (tournament.registrationLink) {
+        console.log(`Anmeldelink: ${tournament.registrationLink}`);
+      }
+
+      console.log(`\n`);
     }
   } catch (error) {
     console.error(`Unable to parse tournaments: ${(error as any).message}`);

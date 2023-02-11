@@ -1,5 +1,8 @@
 export interface ITournament {
   date: Date;
-  participants: string;
+  freeSpots: string;
+  waitingList: string;
   area: string;
+  organizer: string;
+  registrationLink?: string;
 }
