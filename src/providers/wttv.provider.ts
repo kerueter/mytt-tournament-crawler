@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { parse } from 'node-html-parser';
+import { parse as parseHTML } from 'node-html-parser';
 
 import { BaseProvider } from './base.provider';
 import { ITournament } from '../interfaces/tournament.interface';
@@ -26,7 +26,7 @@ export class WTTVProvider extends BaseProvider {
       params: { federation: 'WTTV', circuit, date }
     });
 
-    const parsedData = parse(response.data);
+    const parsedData = parseHTML(response.data);
 
     const resultSet = parsedData.querySelector('.result-set');
 
