@@ -13,12 +13,18 @@
     word-wrap: break-word;
   }
 
-  tr:nth-child(odd) {
-    background-color: #ffffff;
-  }
+  tr {
+    &:nth-child(odd) {
+      background-color: #ffffff;
+    }
 
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
+    &:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    &:hover {
+      background-color: #d2d2d2;
+    }
   }
 
   @media only screen and (max-width: 480px) {
