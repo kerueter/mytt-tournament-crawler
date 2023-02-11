@@ -21,7 +21,7 @@ async function run(): Promise<void> {
       if (freeSpots === 0) {
         colorCode = 31;
       } else if (totalSpots > 0 && (freeSpots / totalSpots) < 0.25) {
-        colorCode = 32;
+        colorCode = 33;
       }
 
       console.log(`Datum: ${tournament.date.toLocaleString('de-DE', { dateStyle: 'full', timeStyle: 'short' })}`);
