@@ -21,7 +21,7 @@ export class WTTVProvider extends BaseProvider {
   public async parseTournaments(
     circuit = '2023_Turnierserie',
     date?: string,
-    areas = ['Bielefeld/Halle']
+    areas = ['Bielefeld/Halle', 'Wiedenbrück']
   ): Promise<ITournament[]> {
     return super.parseTournaments(circuit, date, areas);
   }
