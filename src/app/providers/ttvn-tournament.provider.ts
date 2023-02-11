@@ -1,15 +1,20 @@
-import { BaseProvider } from './base.provider';
-import { ITournament } from '../interfaces/tournament.interface';
+import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 
-export class TTVNProvider extends BaseProvider {
+import { ITournament } from '../interfaces/tournament.interface';
+import { BaseTournamentProvider } from './base-tournament.provider';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class TTVNTournamentProvider extends BaseTournamentProvider {
   private static readonly BASE_URL = 'https://ttvn.click-tt.de';
   private static readonly FEDERATION = 'TTVN';
 
-  /**
-   * Constructor of the TTVN provider.
-   */
-  constructor() {
-    super(TTVNProvider.BASE_URL, TTVNProvider.FEDERATION);
+  constructor(
+    protected override readonly httpClient: HttpClient
+  ) {
+    super(httpClient, TTVNTournamentProvider.BASE_URL, TTVNTournamentProvider.FEDERATION);
   }
 
   /**
@@ -18,7 +23,7 @@ export class TTVNProvider extends BaseProvider {
    * @param date
    * @param areas
    */
-  public async parseTournaments(
+  public override async parseTournaments(
     circuit = 'TTVN-Race 23',
     date?: string,
     areas = ['Osnabrück-Stadt', 'Osnabrück-Land']

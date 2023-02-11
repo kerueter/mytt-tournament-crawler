@@ -1,15 +1,20 @@
-import { BaseProvider } from './base.provider';
-import { ITournament } from '../interfaces/tournament.interface';
+import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 
-export class WTTVProvider extends BaseProvider {
+import { ITournament } from '../interfaces/tournament.interface';
+import { BaseTournamentProvider } from './base-tournament.provider';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class WTTVTournamentProvider extends BaseTournamentProvider {
   private static readonly BASE_URL = 'https://wttv.click-tt.de';
   private static readonly FEDERATION = 'WTTV';
 
-  /**
-   * Constructor of the WTTV provider.
-   */
-  constructor() {
-    super(WTTVProvider.BASE_URL, WTTVProvider.FEDERATION);
+  constructor(
+    protected override readonly httpClient: HttpClient
+  ) {
+    super(httpClient, WTTVTournamentProvider.BASE_URL, WTTVTournamentProvider.FEDERATION);
   }
 
   /**
@@ -18,7 +23,7 @@ export class WTTVProvider extends BaseProvider {
    * @param date
    * @param areas
    */
-  public async parseTournaments(
+  public override async parseTournaments(
     circuit = '2023_Turnierserie',
     date?: string,
     areas = ['Bielefeld/Halle', 'Wiedenbrück']

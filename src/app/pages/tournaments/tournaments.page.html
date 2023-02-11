@@ -1,0 +1,20 @@
+<div class="flex-container">
+  <table class="tt-table">
+    <tr>
+      <th>Datum</th>
+      <th>Organisator</th>
+      <th>Freie Plätze</th>
+      <th>Warteliste</th>
+      <th>Area</th>
+      <th>Anmeldelink</th>
+    </tr>
+    <tr *ngFor="let tournament of tournaments">
+      <td>{{ tournament.date | date:'fullDate' }}</td>
+      <td>{{ tournament.organizer }}</td>
+      <td [style.color]="tournament.freeSpots | freeSpotsColor">{{ tournament.freeSpots }}</td>
+      <td>{{ tournament.waitingList }}</td>
+      <td>{{ tournament.area }}</td>
+      <td><a [href]="tournament.registrationLink" target="_blank">Link</a></td>
+    </tr>
+  </table>
+</div>

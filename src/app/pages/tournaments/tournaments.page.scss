@@ -1,0 +1,30 @@
+.tt-table {
+  margin-top: 12px;
+  table-layout: fixed;
+
+  td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+  }
+
+  tr:nth-child(odd) {
+    background-color: #ffffff;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  @media only screen and (max-width: 480px) {
+    & {
+      overflow-x: auto;
+      display: block;
+    }
+  }
+}

@@ -1,13 +1,10 @@
-import axios from 'axios';
-import { parse as parseHTML } from 'node-html-parser';
+import { HttpClient } from "@angular/common/http";
+import { lastValueFrom } from "rxjs";
 
 import { ITournament } from "../interfaces/tournament.interface";
 
-export abstract class BaseProvider {
+export abstract class BaseTournamentProvider {
   private static readonly BASE_ROUTE = '/cgi-bin/WebObjects/nuLigaTTDE.woa/wa/tournamentCalendar';
-
-  protected baseUrl: string;
-  protected federation: string;
 
   /**
    * Constructor of the base provider.
@@ -15,10 +12,11 @@ export abstract class BaseProvider {
    * @param baseUrl
    * @param federation
    */
-  constructor(baseUrl: string, federation: string) {
-    this.baseUrl = baseUrl;
-    this.federation = federation;
-  }
+  constructor(
+    protected readonly httpClient: HttpClient,
+    protected readonly baseUrl: string,
+    protected readonly federation: string
+  ) { }
 
   /**
    *
@@ -45,13 +43,22 @@ export abstract class BaseProvider {
       circuit
     };
 
-    const response = await axios.get(`${this.baseUrl}${BaseProvider.BASE_ROUTE}`, {
-      params: requestParams
-    });
+    const response = await lastValueFrom(
+      this.httpClient.get(`https://corsanywhere.herokuapp.com/${this.baseUrl}${BaseTournamentProvider.BASE_ROUTE}`, {
+        params: requestParams,
+        responseType: 'text'
+      })
+    );
 
-    const parsedData = parseHTML(response.data);
+    if (!response) {
+      return [];
+    }
 
-    const resultSet = parsedData.querySelector('.result-set');
+    const domParser = new DOMParser();
+
+    const htmlContent = domParser.parseFromString(response, 'text/html');
+
+    const resultSet = htmlContent.querySelector('.result-set');
 
     const resultRows = resultSet?.getElementsByTagName('tr');
 
