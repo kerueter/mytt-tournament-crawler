@@ -1,6 +1,3 @@
-import axios from 'axios';
-import { parse as parseHTML } from 'node-html-parser';
-
 import { BaseProvider } from './base.provider';
 import { ITournament } from '../interfaces/tournament.interface';
 
@@ -27,5 +24,16 @@ export class WTTVProvider extends BaseProvider {
     areas = ['Bielefeld/Halle']
   ): Promise<ITournament[]> {
     return super.parseTournaments(circuit, date, areas);
+  }
+
+  /**
+   * Parse a date string to a date object.
+   *
+   * @param dateString The date string to parse
+   */
+  protected parseDate(dateString: string): Date {
+    const [_, datePart, timePart, __] = dateString.split(' ');
+
+    return this.processDateParts(datePart, timePart);
   }
 }

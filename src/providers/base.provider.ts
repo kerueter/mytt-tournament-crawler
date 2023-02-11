@@ -25,7 +25,7 @@ export abstract class BaseProvider {
    * @param areas
    */
   public async parseTournaments(
-    circuit: string,
+    circuit?: string,
     date?: string,
     areas?: string[]
   ): Promise<ITournament[]> {
@@ -36,8 +36,14 @@ export abstract class BaseProvider {
 
     const requestDate = date || `${currentYear}-${currentMonth}-01`;
 
+    const requestParams: Record<string, any> = {
+      federation: this.federation,
+      date: requestDate,
+      circuit
+    };
+
     const response = await axios.get(this.baseUrl, {
-      params: { federation: this.federation, circuit, date: requestDate }
+      params: requestParams
     });
 
     const parsedData = parseHTML(response.data);
@@ -79,17 +85,27 @@ export abstract class BaseProvider {
     return tournaments;
   }
 
+  protected abstract parseDate(dateString: string): Date;
+
   /**
    * Parse a date string to a date object.
    *
-   * @param dateString Example: Mo. 06.02.2023 19:30 Uhr
+   * @param datePart Example: 06.02.2023
+   * @param timePart Example: 19:30
    */
-  protected parseDate(dateString: string): Date {
-    const [_, datePart, timePart, __] = dateString.split(' ');
-
+  protected processDateParts(datePart: string, timePart?: string): Date {
     const [date, month, year] = datePart.split('.');
-    const [hour, minute] = timePart.split(':');
 
-    return new Date(Number(year), Number(month) - 1, Number(date), Number(hour), Number(minute), 0, 0);
+    let hour = 0;
+    let minute = 0;
+
+    if (timePart && timePart.length) {
+      const [hourExtracted, minuteExtracted] = timePart.split(':');
+
+      hour = Number(hourExtracted);
+      minute = Number(minuteExtracted);
+    }
+
+    return new Date(Number(year), Number(month) - 1, Number(date), hour, minute, 0, 0);
   }
 }
