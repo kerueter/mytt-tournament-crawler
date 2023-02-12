@@ -20,8 +20,12 @@ export class TournamentsPage {
 
   async ngOnInit() {
     try {
-      this.tournaments.push(...await this.wttvTournamentProvider.parseTournaments());
-      this.tournaments.push(...await this.ttvnTournamentProvider.parseTournaments());
+      const tournamentsResult = await Promise.all([
+        this.wttvTournamentProvider.parseTournaments(),
+        this.ttvnTournamentProvider.parseTournaments()
+      ]);
+
+      this.tournaments.push(...tournamentsResult.flat());
 
       this.tournaments.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {

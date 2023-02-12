@@ -25,10 +25,9 @@ export class WTTVTournamentProvider extends BaseTournamentProvider {
    */
   public override async parseTournaments(
     circuit = '2023_Turnierserie',
-    date?: string,
     areas = ['Bielefeld/Halle', 'Wiedenbrück']
   ): Promise<ITournament[]> {
-    return super.parseTournaments(circuit, date, areas);
+    return super.parseTournaments(circuit, areas);
   }
 
   /**

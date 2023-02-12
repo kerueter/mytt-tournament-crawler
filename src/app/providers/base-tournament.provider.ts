@@ -22,12 +22,10 @@ export abstract class BaseTournamentProvider {
    *
    * @param federation
    * @param circuit
-   * @param date
    * @param areas
    */
   public async parseTournaments(
     circuit?: string,
-    date?: string,
     areas?: string[]
   ): Promise<ITournament[]> {
     const now = new Date();
@@ -35,67 +33,71 @@ export abstract class BaseTournamentProvider {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth() + 1;
 
-    const requestDate = date || `${currentYear}-${currentMonth}-01`;
+    // Build promises to request the whole year starting from the current month.
+    const tournamentPromises: Array<() => Promise<string>> = [];
+    for (let requestMonth = currentMonth; requestMonth < 13; requestMonth++) {
+      const requestDate = `${currentYear}-${requestMonth < 10 ? ('0' + requestMonth) : requestMonth}-01`;
 
-    const requestParams: Record<string, any> = {
-      federation: this.federation,
-      date: requestDate,
-      circuit
-    };
+      const requestParams: Record<string, any> = {
+        federation: this.federation,
+        date: requestDate,
+        circuit
+      };
 
-    const response = await lastValueFrom(
-      this.httpClient.get(`https://corsanywhere.herokuapp.com/${this.baseUrl}${BaseTournamentProvider.BASE_ROUTE}`, {
-        params: requestParams,
-        responseType: 'text'
-      })
-    );
-
-    if (!response) {
-      return [];
+      tournamentPromises.push(
+        () => lastValueFrom(
+          this.httpClient.get(`https://corsanywhere.herokuapp.com/${this.baseUrl}${BaseTournamentProvider.BASE_ROUTE}`, {
+            params: requestParams,
+            responseType: 'text'
+          })
+        )
+      );
     }
 
-    const domParser = new DOMParser();
-
-    const htmlContent = domParser.parseFromString(response, 'text/html');
-
-    const resultSet = htmlContent.querySelector('.result-set');
-
-    const resultRows = resultSet?.getElementsByTagName('tr');
-
-    if (!resultRows) {
-      console.error('No result rows found');
-      return [];
-    }
+    const tournamentResponses = await Promise.all(tournamentPromises.map(promise => promise()));
 
     let tournaments: ITournament[] = [];
 
-    // We skip the first row since this is the header row.
-    for (let i = 1; i < resultRows.length; i++) {
-      const resultCols = resultRows[i]?.getElementsByTagName('td');
+    for (const tournamentResponse of tournamentResponses) {
+      const domParser = new DOMParser();
 
-      if (!resultCols || resultCols.length < 5) {
-        continue;
+      const htmlContent = domParser.parseFromString(tournamentResponse, 'text/html');
+
+      const resultSet = htmlContent.querySelector('.result-set');
+
+      const resultRows = resultSet?.getElementsByTagName('tr');
+
+      if (!resultRows) {
+        console.error('No result rows found');
+        return [];
       }
 
-      const area = resultCols[4].innerText.trim();
+      // We skip the first row since this is the header row.
+      for (let i = 1; i < resultRows.length; i++) {
+        const resultCols = resultRows[i]?.getElementsByTagName('td');
 
-      if (areas && !areas.includes(area)) {
-        continue;
+        if (!resultCols || resultCols.length < 5) {
+          continue;
+        }
+
+        const area = resultCols[4].innerText.trim();
+
+        if (areas && !areas.includes(area)) {
+          continue;
+        }
+
+        const registrationLink = `${this.baseUrl}${resultCols[1].getElementsByTagName('a')?.[0]?.getAttribute('href')}`;
+        const [_, organizer] = resultCols[1].innerHTML.split('<br>');
+
+        tournaments.push({
+          date: this.parseDate(resultCols[0].innerText.trim()),
+          freeSpots: resultCols[2].innerText.trim(),
+          waitingList: resultCols[3].innerText.trim(),
+          area,
+          organizer: organizer.trim(),
+          registrationLink
+        });
       }
-
-      const registrationLink = `${this.baseUrl}${resultCols[1].getElementsByTagName('a')?.[0]?.getAttribute('href')}`;
-      const [_, organizer] = resultCols[1].innerHTML.split('<br>');
-
-      // console.log(resultCols[1].toString());
-
-      tournaments.push({
-        date: this.parseDate(resultCols[0].innerText.trim()),
-        freeSpots: resultCols[2].innerText.trim(),
-        waitingList: resultCols[3].innerText.trim(),
-        area,
-        organizer: organizer.trim(),
-        registrationLink
-      });
     }
 
     tournaments = tournaments.filter(tournament => tournament.date.getTime() >= now.getTime());

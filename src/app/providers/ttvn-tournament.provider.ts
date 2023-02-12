@@ -20,15 +20,13 @@ export class TTVNTournamentProvider extends BaseTournamentProvider {
   /**
    *
    * @param circuit
-   * @param date
    * @param areas
    */
   public override async parseTournaments(
     circuit = 'TTVN-Race 23',
-    date?: string,
     areas = ['Osnabrück-Stadt', 'Osnabrück-Land']
   ): Promise<ITournament[]> {
-    return super.parseTournaments(circuit, date, areas);
+    return super.parseTournaments(circuit, areas);
   }
 
   /**
