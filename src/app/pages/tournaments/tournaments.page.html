@@ -1,5 +1,7 @@
 <div class="flex-container">
-  <table class="tt-table">
+  <div class="lds-dual-ring" *ngIf="isLoading"></div>
+
+  <table class="tt-table" *ngIf="!isLoading">
     <tr>
       <th>Datum</th>
       <th>Organisator</th>

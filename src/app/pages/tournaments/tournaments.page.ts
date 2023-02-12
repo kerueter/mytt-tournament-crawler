@@ -11,14 +11,19 @@ import { WTTVTournamentProvider } from '../../providers/wttv-tournament.provider
 export class TournamentsPage {
   public tournaments: ITournament[];
 
+  public isLoading: boolean;
+
   constructor(
     private readonly wttvTournamentProvider: WTTVTournamentProvider,
     private readonly ttvnTournamentProvider: TTVNTournamentProvider
   ) {
     this.tournaments = [];
+    this.isLoading = false;
   }
 
   async ngOnInit() {
+    this.isLoading = true;
+
     try {
       const tournamentsResult = await Promise.all([
         this.wttvTournamentProvider.parseTournaments(),
@@ -31,5 +36,7 @@ export class TournamentsPage {
     } catch (error) {
       console.error(error);
     }
+
+    this.isLoading = false;
   }
 }
