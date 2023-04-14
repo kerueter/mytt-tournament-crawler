@@ -4,6 +4,7 @@ import { lastValueFrom } from "rxjs";
 import { ITournament } from "../interfaces/tournament.interface";
 
 export abstract class BaseTournamentProvider {
+  private static readonly CORS_ANYWHERE_PROXY_URL = 'https://cors-anywhere.herokuapp.com';
   private static readonly BASE_ROUTE = '/cgi-bin/WebObjects/nuLigaTTDE.woa/wa/tournamentCalendar';
 
   /**
@@ -46,7 +47,7 @@ export abstract class BaseTournamentProvider {
 
       tournamentPromises.push(
         () => lastValueFrom(
-          this.httpClient.get(`https://corsanywhere.herokuapp.com/${this.baseUrl}${BaseTournamentProvider.BASE_ROUTE}`, {
+          this.httpClient.get(`${BaseTournamentProvider.CORS_ANYWHERE_PROXY_URL}/${this.baseUrl}${BaseTournamentProvider.BASE_ROUTE}`, {
             params: requestParams,
             responseType: 'text'
           })
