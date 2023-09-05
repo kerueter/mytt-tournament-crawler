@@ -25,7 +25,7 @@ export class WTTVTournamentProvider extends BaseTournamentProvider {
    */
   public override async parseTournaments(
     circuit = '2023_Turnierserie',
-    areas = ['Bielefeld/Halle', 'Herford', 'Minden/Lübbecke', 'Münster/Warendorf', 'Paderborn', 'Steinfurt', 'Wiedenbrück']
+    areas = ['Münsterland', 'Ostwestfalen-Nord']
   ): Promise<ITournament[]> {
     return super.parseTournaments(circuit, areas);
   }

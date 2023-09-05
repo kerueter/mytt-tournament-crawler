@@ -4,7 +4,7 @@ import { lastValueFrom } from "rxjs";
 import { ITournament } from "../interfaces/tournament.interface";
 
 export abstract class BaseTournamentProvider {
-  private static readonly CORS_ANYWHERE_PROXY_URL = 'https://europe-west3-mytt-tournament-crawler.cloudfunctions.net/cors-anywhere';
+  private static readonly CORS_ANYWHERE_PROXY_URL = 'https://cors-anywhere.herokuapp.com';
   private static readonly BASE_ROUTE = '/cgi-bin/WebObjects/nuLigaTTDE.woa/wa/tournamentCalendar';
 
   /**
